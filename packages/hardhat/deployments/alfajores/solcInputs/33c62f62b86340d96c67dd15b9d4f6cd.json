@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/Notary.sol": {
+      "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.0;\r\n\r\ncontract Notary {\r\n    address public owner;\r\n\r\n    struct Document {\r\n        uint256 timestamp;\r\n        address owner;\r\n        string hash;\r\n        string metadata; // Additional metadata for the document\r\n        bool revoked;\r\n    }\r\n\r\n    mapping(string => Document) public documents;\r\n    mapping(address => string[]) public userDocuments;\r\n\r\n    event DocumentNotarized(address indexed owner, string indexed documentHash, uint256 timestamp, string metadata);\r\n    event DocumentRetrieved(address indexed requester, string indexed documentHash, uint256 timestamp);\r\n    event DocumentRevoked(address indexed owner, string indexed documentHash, uint256 timestamp);\r\n\r\n    modifier onlyOwner() {\r\n        require(msg.sender == owner, \"You are not the owner\");\r\n        _;\r\n    }\r\n\r\n    modifier onlyDocumentOwner(string memory _hash) {\r\n        require(documents[_hash].owner == msg.sender, \"You are not the owner of this document\");\r\n        _;\r\n    }\r\n\r\n    modifier documentNotRevoked(string memory _hash) {\r\n        require(!documents[_hash].revoked, \"This document has been revoked\");\r\n        _;\r\n    }\r\n\r\n    constructor() {\r\n        owner = msg.sender;\r\n    }\r\n\r\n    function notarizeDocument(string memory _hash, string memory _metadata) public {\r\n        require(documents[_hash].timestamp == 0, \"Document already notarized\");\r\n\r\n        documents[_hash] = Document({\r\n            timestamp: block.timestamp,\r\n            owner: msg.sender,\r\n            hash: _hash,\r\n            metadata: _metadata,\r\n            revoked: false\r\n        });\r\n\r\n        userDocuments[msg.sender].push(_hash);\r\n\r\n        emit DocumentNotarized(msg.sender, _hash, block.timestamp, _metadata);\r\n    }\r\n\r\n    function retrieveDocument(string memory _hash) public onlyDocumentOwner(_hash) documentNotRevoked(_hash) {\r\n        emit DocumentRetrieved(msg.sender, _hash, block.timestamp);\r\n    }\r\n\r\n    function revokeDocument(string memory _hash) public onlyDocumentOwner(_hash) documentNotRevoked(_hash) {\r\n        documents[_hash].revoked = true;\r\n        emit DocumentRevoked(msg.sender, _hash, block.timestamp);\r\n    }\r\n\r\n    function getOwnedDocuments() public view returns (string[] memory) {\r\n        return userDocuments[msg.sender];\r\n    }\r\n\r\n    function verifyDocument(string memory _hash) public view returns (uint256, address, string memory, bool) {\r\n        return (documents[_hash].timestamp, documents[_hash].owner, documents[_hash].metadata, documents[_hash].revoked);\r\n    }\r\n}\r\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
