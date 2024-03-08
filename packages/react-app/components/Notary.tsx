@@ -14,7 +14,6 @@ import { toast } from "react-toastify";
 // Import our custom identicon template to display the owner of the Notary
 // import { identiconTemplate } from "@/helpers";
 // Import our custom hooks to interact with the smart contract
-import { useContractApprove } from "@/hooks/contract/useApprove";
 import { useContractCall } from "@/hooks/contract/useContractRead";
 import { useContractSend } from "@/hooks/contract/useContractWrite";
 
