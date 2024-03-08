@@ -37,7 +37,7 @@ To run the Notary DApp locally, follow these steps:
     ```
 2. Navigate to the project directory:
     ```bash
-    cd notary
+    cd notary/packages/react-app
     ```
 3. Install dependencies:
     ```bash

@@ -2,7 +2,7 @@
 
 // Import the wagmi hook to read from a smart contract
 import { useContractRead } from 'wagmi';
-// Import the Marketplace ABI(Interface)
+// Import the Marketplace ABI(Interface) and contract address
 import {ABI,ADDRESS} from "../../abi/index";
 
 // read from smart contract

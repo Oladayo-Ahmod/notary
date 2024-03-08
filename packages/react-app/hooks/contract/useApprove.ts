@@ -8,6 +8,9 @@ import Erc20Instance from "../../abi/erc20.json";
 import MarketplaceInstance from "../../abi/Notary.json";
 // Import BigNumber from ethers to handle big numbers used in Celo
 import {BigNumber} from "ethers";
+// Import the Marketplace ABI(Interface) and contract address
+import {ABI,ADDRESS} from "../../abi/index";
+
 
 // write to a smart contract
 export const useContractApprove = (price: number | string) => {
@@ -16,13 +19,13 @@ export const useContractApprove = (price: number | string) => {
     // Prepare the write to the smart contract
     const { config } = usePrepareContractWrite({
         // The address of the smart contract, in this case the ERC20 cUSD token address from the JSON file
-        address: Erc20Instance.address as `0x${string}`,
+        address: ADDRESS as `0x${string}`,
         // The ABI of the smart contract, in this case the ERC20 cUSD token address from the JSON file
         abi: Erc20Instance.abi,
         // The smart contract function name to call
         functionName: 'approve',
         // The arguments to pass to the smart contract function, in this case the Marketplace address and the product price
-        args: [MarketplaceInstance.address, price],
+        args: [ADDRESS, price],
         // The gas limit to use when sending a transaction
         overrides: {
             gasLimit
