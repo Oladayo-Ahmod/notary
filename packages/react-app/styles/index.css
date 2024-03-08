@@ -1,0 +1,27 @@
+.bg-wrapper{
+    height: auto;
+    color :white;
+    background: url('https://media.istockphoto.com/id/1396387322/photo/woman-working-in-the-office.jpg?s=2048x2048&w=is&k=20&c=JdUDb9XWSTsgH5T3K4QpNybaetHrzUe9-2qJ8WdH2kE=') no-repeat;
+  }
+  label,input{
+    color: black;
+  }
+  .notary-btn{
+    position: relative;
+    top: 20vh;
+  }
+  .notary-h1{
+    font-size: 50px;
+    font-weight: 700;
+    color: #007bff;
+  }
+  .docs-h2{
+    font-weight: 800;
+    font-size: larger;
+    color: #3B82F6;
+  }
+  .docs-wrapper{
+    margin-bottom: 35px;
+    position: relative;
+    top: 100px;
+  }

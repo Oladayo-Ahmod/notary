@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/Notary.sol": {
+      "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.0;\r\n\r\ncontract Notary {\r\n    address public owner;\r\n\r\n    // Struct to represent a notarized document\r\n    struct Document {\r\n        uint256 timestamp; // Timestamp when the document was notarized\r\n        address owner; // Address of the owner who notarized the document\r\n        string hash; // Hash of the document content\r\n        string imageURI; // URI to the image associated with the document\r\n        string description; // Description of the document\r\n        bool revoked; // Flag to indicate if the document has been revoked\r\n    }\r\n\r\n    // Mapping to store documents indexed by their hash\r\n    mapping(string => Document) public documents;\r\n\r\n    // Mapping to store a list of document hashes owned by each user\r\n    mapping(address => string[]) public userDocuments;\r\n\r\n    // Events to log document actions\r\n    event DocumentNotarized(address indexed owner, string indexed documentHash, uint256 timestamp, string imageURI, string description);\r\n    event DocumentRetrieved(address indexed requester, string indexed documentHash, uint256 timestamp);\r\n    event DocumentRevoked(address indexed owner, string indexed documentHash, uint256 timestamp);\r\n\r\n    // Modifier to restrict access to the contract owner\r\n    modifier onlyOwner() {\r\n        require(msg.sender == owner, \"You are not the owner\");\r\n        _;\r\n    }\r\n\r\n    // Modifier to restrict access to the owner of a specific document\r\n    modifier onlyDocumentOwner(string memory _hash) {\r\n        require(documents[_hash].owner == msg.sender, \"You are not the owner of this document\");\r\n        _;\r\n    }\r\n\r\n    // Modifier to check if a document has not been revoked\r\n    modifier documentNotRevoked(string memory _hash) {\r\n        require(!documents[_hash].revoked, \"This document has been revoked\");\r\n        _;\r\n    }\r\n\r\n    // Constructor to set the contract owner\r\n    constructor() {\r\n        owner = msg.sender;\r\n    }\r\n\r\n    // Function to notarize a document\r\n    function notarizeDocument(string memory _hash, string memory _imageURI, string memory _description) public {\r\n        require(documents[_hash].timestamp == 0, \"Document already notarized\");\r\n\r\n        documents[_hash] = Document({\r\n            timestamp: block.timestamp,\r\n            owner: msg.sender,\r\n            hash: _hash,\r\n            imageURI: _imageURI,\r\n            description: _description,\r\n            revoked: false\r\n        });\r\n\r\n        userDocuments[msg.sender].push(_hash);\r\n\r\n        emit DocumentNotarized(msg.sender, _hash, block.timestamp, _imageURI, _description);\r\n    }\r\n\r\n    // Function to retrieve a document by its hash\r\n    function retrieveDocument(string memory _hash) public view returns (Document memory) {\r\n        return documents[_hash];\r\n    }\r\n\r\n    // Function to revoke a notarized document\r\n    function revokeDocument(string memory _hash) public onlyDocumentOwner(_hash) documentNotRevoked(_hash) {\r\n        documents[_hash].revoked = true;\r\n        emit DocumentRevoked(msg.sender, _hash, block.timestamp);\r\n    }\r\n\r\n    // Function to verify details of a document by its hash\r\n    function verifyDocument(string memory _hash) public view returns (uint256, address, string memory, string memory, bool) {\r\n        return (documents[_hash].timestamp, documents[_hash].owner, documents[_hash].imageURI, documents[_hash].description, documents[_hash].revoked);\r\n    }\r\n\r\n    // Function to get all documents owned by the caller\r\n    function getAllDocuments() public view returns (Document[] memory) {\r\n        uint256 documentCount = userDocuments[msg.sender].length;\r\n        Document[] memory allDocuments = new Document[](documentCount);\r\n\r\n        for (uint256 i = 0; i < documentCount; i++) {\r\n            string memory documentHash = userDocuments[msg.sender][i];\r\n            allDocuments[i] = documents[documentHash];\r\n        }\r\n\r\n        return allDocuments;\r\n    }\r\n}\r\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

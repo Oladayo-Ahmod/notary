@@ -7,7 +7,9 @@ import { WagmiConfig, configureChains, createConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import Layout from "../components/Layout";
 import "../styles/globals.css";
+import "../styles/index.css"
 import 'react-toastify/dist/ReactToastify.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 // Import the ToastContainer component from react-toastify to display notifications.
 import {ToastContainer} from "react-toastify";
 
